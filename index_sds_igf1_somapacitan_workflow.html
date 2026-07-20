@@ -721,6 +721,60 @@ footer p {
                     </div>
                 </div>
 
+                <div class="result-section" id="result-section">
+                    <h3 data-i18n="resultTitle">Score de Desvio Padrão (Z-Score)</h3>
+                    <div class="sds-score" id="sds-score">0.00</div>
+                    <div class="sds-interpretation" id="sds-interpretation">Intervalo Normal</div>
+
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        <span data-i18n="convertedLabel">Valor Convertido:</span> <span id="converted-value">-</span> ng/mL
+                    </p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <span data-i18n="refRangeLabel">Intervalo Ref.:</span> <span id="ref-range">-</span> ng/mL
+                    </p>
+
+                    <div class="gauge-container">
+                        <div class="gauge-fill" id="gauge-fill"></div>
+                    </div>
+                    <div class="gauge-markers">
+                        <span>-3 SD</span>
+                        <span>-2 SD</span>
+                        <span>0</span>
+                        <span>+2 SD</span>
+                        <span>+3 SD</span>
+                    </div>
+
+                        <div class="result-subpanel" id="sds-adjustment-panel" style="display:none;">
+                        <h4 data-i18n="sdsAdjustmentResultTitle">Ajuste SDS</h4>
+                        <div class="metric-grid">
+                            <div class="metric-card"><span data-i18n="sdsOriginalLabel">SDS calculado</span><strong id="sds-original-result">-</strong></div>
+                            <div class="metric-card"><span data-i18n="preAnalyticalDeltaLabel">&Delta; pr&eacute;-anal&iacute;tico</span><strong id="sds-pre-delta-result">-</strong></div>
+                            <div class="metric-card"><span data-i18n="timingDeltaLabel">&Delta; p&oacute;s-dose</span><strong id="sds-timing-delta-result">-</strong></div>
+                            <div class="metric-card"><span data-i18n="sdsDecisionLabel">SDS para decis&atilde;o</span><strong id="sds-decision-result">-</strong></div>
+                        </div>
+                        <div class="guidance-warning" id="sds-adjustment-note"></div>
+                    </div>
+
+                    <div class="result-subpanel" id="therapy-guidance-panel" style="display:none;">
+                        <h4 data-i18n="therapyGuidanceTitle">Orienta&ccedil;&atilde;o para ajuste de somapacitano</h4>
+                        <ul class="guidance-list" id="therapy-guidance-list"></ul>
+                        <div class="guidance-warning" id="therapy-guidance-warning"></div>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="igfChart"></canvas>
+                    </div>
+
+                    <div class="result-actions"
+                        style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
+                        <button type="button" id="btn-download-pdf" class="action-btn" data-i18n="downloadPdfBtn"
+                            style="background: white; color: var(--nn-blue); border: 2px solid var(--nn-blue); padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Descarregar
+                            PDF</button>
+                        <button type="button" id="btn-send-email" class="action-btn" data-i18n="sendEmailBtn"
+                            style="background: white; color: var(--nn-blue); border: 2px solid var(--nn-blue); padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Enviar
+                            por Email</button>
+                    </div>
+                </div>
 
                 <div class="therapy-module" id="somapacitan-module">
                     <div class="module-header">
@@ -800,62 +854,7 @@ footer p {
                 <button type="submit" class="calculate-btn" data-i18n="calculateBtn">Calcular Score SDS</button>
             </form>
 
-            <div class="result-section" id="result-section">
-                <h3 data-i18n="resultTitle">Score de Desvio Padrão (Z-Score)</h3>
-                <div class="sds-score" id="sds-score">0.00</div>
-                <div class="sds-interpretation" id="sds-interpretation">Intervalo Normal</div>
 
-                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                    <span data-i18n="convertedLabel">Valor Convertido:</span> <span id="converted-value">-</span> ng/mL
-                </p>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                    <span data-i18n="refRangeLabel">Intervalo Ref.:</span> <span id="ref-range">-</span> ng/mL
-                </p>
-
-                <div class="gauge-container">
-                    <div class="gauge-fill" id="gauge-fill"></div>
-                </div>
-                <div class="gauge-markers">
-                    <span>-3 SD</span>
-                    <span>-2 SD</span>
-                    <span>0</span>
-                    <span>+2 SD</span>
-                    <span>+3 SD</span>
-                </div>
-
-
-                <div class="result-subpanel" id="sds-adjustment-panel" style="display:none;">
-                    <h4 data-i18n="sdsAdjustmentResultTitle">Ajuste SDS</h4>
-                    <div class="metric-grid">
-                        <div class="metric-card"><span data-i18n="sdsOriginalLabel">SDS calculado</span><strong id="sds-original-result">-</strong></div>
-                        <div class="metric-card"><span data-i18n="preAnalyticalDeltaLabel">&Delta; pr&eacute;-anal&iacute;tico</span><strong id="sds-pre-delta-result">-</strong></div>
-                        <div class="metric-card"><span data-i18n="timingDeltaLabel">&Delta; p&oacute;s-dose</span><strong id="sds-timing-delta-result">-</strong></div>
-                        <div class="metric-card"><span data-i18n="sdsDecisionLabel">SDS para decis&atilde;o</span><strong id="sds-decision-result">-</strong></div>
-                    </div>
-                    <div class="guidance-warning" id="sds-adjustment-note"></div>
-                </div>
-
-                <div class="result-subpanel" id="therapy-guidance-panel" style="display:none;">
-                    <h4 data-i18n="therapyGuidanceTitle">Orienta&ccedil;&atilde;o para ajuste de somapacitano</h4>
-                    <ul class="guidance-list" id="therapy-guidance-list"></ul>
-                    <div class="guidance-warning" id="therapy-guidance-warning"></div>
-                </div>
-
-                <!-- Percentile Graph Container -->
-                <div class="chart-container">
-                    <canvas id="igfChart"></canvas>
-                </div>
-
-                <div class="result-actions"
-                    style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
-                    <button type="button" id="btn-download-pdf" class="action-btn" data-i18n="downloadPdfBtn"
-                        style="background: white; color: var(--nn-blue); border: 2px solid var(--nn-blue); padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Descarregar
-                        PDF</button>
-                    <button type="button" id="btn-send-email" class="action-btn" data-i18n="sendEmailBtn"
-                        style="background: white; color: var(--nn-blue); border: 2px solid var(--nn-blue); padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Enviar
-                        por Email</button>
-                </div>
-            </div>
         </section>
 
         <aside class="glass-panel info-panel">
