@@ -663,6 +663,7 @@ select:focus {
     border: none;
     border-radius: 0;
     text-align: center;
+    appearance: textfield;
     -moz-appearance: textfield;
 }
 
@@ -1206,14 +1207,6 @@ footer p {
 }
 
 /* Export/PDF helper styles */
-.export-status {
-    min-height: 1.4rem;
-    margin-top: 0.75rem;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    text-align: center;
-}
-
 .action-btn:disabled,
 .action-btn[aria-busy="true"] {
     cursor: wait !important;
@@ -1326,7 +1319,7 @@ footer p {
                 <div class="form-group" data-validation-field="kit">
                     <label for="kit" data-i18n="kitLabel">Kit de ensaio / método analítico*</label>
                     <select id="kit" name="kit" required>
-                        <option value="" disabled selected hidden>Selecione o kit de ensaio ou método</option>
+                        <option value="" disabled selected hidden data-i18n="kitPlaceholder">Selecione o kit de ensaio ou método</option>
                         <option value="roche">Roche Elecsys (Chemiluminescence)</option>
                         <option value="mediagnost">Mediagnost Elisa (E20)</option>
                         <option value="mediagnost_ria">Mediagnost RIA (E22)</option>
@@ -1345,7 +1338,7 @@ footer p {
                         <label for="age" data-i18n="ageLabel">Idade*</label>
                         <div class="age-input-group">
                             <button type="button" class="age-btn" id="age-minus">-</button>
-                            <input type="number" id="age" name="age" min="0" max="70" step="1" required placeholder="Selecione a idade" aria-describedby="age-error" aria-invalid="false">
+                            <input type="number" id="age" name="age" min="0" max="70" step="1" required placeholder="Selecione a idade" data-i18n-placeholder="agePlaceholder" aria-describedby="age-error" aria-invalid="false">
                             <button type="button" class="age-btn" id="age-plus">+</button>
                         </div>
                         <div class="field-error-message" id="age-error"></div>
@@ -1353,7 +1346,7 @@ footer p {
                     <div class="form-group" style="flex: 1;" data-validation-field="sex">
                         <label for="sex" data-i18n="sexLabel">Sexo*</label>
                         <select id="sex" name="sex" required>
-                            <option value="" disabled selected hidden>Selecione o sexo</option>
+                            <option value="" disabled selected hidden data-i18n="sexPlaceholder">Selecione o sexo</option>
                             <option value="male" data-i18n="maleOption">Masculino</option>
                             <option value="female" data-i18n="femaleOption">Feminino</option>
                         </select>
@@ -1364,20 +1357,20 @@ footer p {
                 <div class="form-group" data-validation-field="igfValue">
                     <label for="igfValue" data-i18n="igfValueLabel">Resultado de IGF-1*</label>
                     <div class="input-wrapper">
-                        <input type="number" id="igfValue" name="igfValue" step="0.1" required placeholder="Introduza o resultado de IGF-1">
+                        <input type="number" id="igfValue" name="igfValue" step="0.1" required placeholder="Introduza o resultado de IGF-1" data-i18n-placeholder="igfValuePlaceholder">
                         <select id="unit" name="unit" class="unit-select">
                             <option value="ngml">ng/mL</option>
                             <option value="nmoll">nmol/L</option>
                         </select>
                     </div>
-                    <p style="margin: 0.4rem 0 0; font-size: 0.9rem; font-style: italic; color: var(--text-secondary);">O SDS será calculado automaticamente.</p>
+                    <p style="margin: 0.4rem 0 0; font-size: 0.9rem; font-style: italic; color: var(--text-secondary);" data-i18n="sdsAutoHelp">O SDS será calculado automaticamente.</p>
                     <div class="field-error-message" id="igfValue-error"></div>
                 </div>
 
                 <div class="result-section" id="result-section">
                     <h3 data-i18n="resultTitle">Score de Desvio Padrão (Z-Score)</h3>
                     <div class="sds-score" id="sds-score">0.00</div>
-                    <div class="sds-interpretation" id="sds-interpretation">Intervalo Normal</div>
+                    <div class="sds-interpretation" id="sds-interpretation" data-i18n="interpNormal">Dentro do intervalo de referência</div>
                     <div class="result-status-pill" id="result-status-pill" aria-live="polite"></div>
 
                     <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">
@@ -1411,54 +1404,28 @@ footer p {
                             <p class="step-header-box__desc" data-i18n="step2Desc">Confirme o estado de equilíbrio e introduza o número de horas entre a última administração de somapacitano e a colheita da amostra.</p>
                         </div>
                         <div class="form-group">
-                            <label for="steadyState">O doente recebeu pelo menos duas administrações semanais consecutivas de somapacitano na dose atual?*</label>
+                            <label for="steadyState" data-i18n="steadyStateLabel">O doente recebeu pelo menos duas administrações semanais consecutivas de somapacitano na dose atual?*</label>
                             <select id="steadyState" name="steadyState">
-                                <option value="" disabled selected hidden>Selecione uma opção</option>
-                                <option value="sim">Sim</option>
-                                <option value="nao">Não</option>
-                                <option value="naosei">Não sei</option>
+                                <option value="" disabled selected hidden data-i18n="selectOption">Selecione uma opção</option>
+                                <option value="sim" data-i18n="yesOption">Sim</option>
+                                <option value="nao" data-i18n="noOption">Não</option>
+                                <option value="naosei" data-i18n="unknownOption">Não sei</option>
                             </select>
                         </div>
                         <div class="form-group hidden" id="sampling-time-group">
-                            <label for="samplingHours">Tempo decorrido entre a última administração de somapacitano e a colheita da amostra de sangue*</label>
+                            <label for="samplingHours" data-i18n="samplingHoursLabel">Tempo decorrido entre a última administração de somapacitano e a colheita da amostra de sangue*</label>
                             <div class="input-wrapper" style="align-items: center; gap: 0.75rem;">
-                                <input type="number" id="samplingHours" name="samplingHours" min="25" max="168" step="1" inputmode="numeric" placeholder="Introduza o número de horas">
-                                <div class="unit-select" style="width: 100px; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #fff; text-align: center;">horas</div>
+                                <input type="number" id="samplingHours" name="samplingHours" min="25" max="168" step="1" inputmode="numeric" placeholder="Introduza o número de horas" data-i18n-placeholder="samplingHoursPlaceholder">
+                                <div class="unit-select" id="sampling-hours-unit" style="width: 100px; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #fff; text-align: center;" data-i18n="hoursUnit">horas</div>
                             </div>
-                            <p style="margin: 0.4rem 0 0; font-size: 0.9rem; color: var(--text-secondary);">Introduza o intervalo entre a administração e a colheita. A estimativa está disponível apenas para colheitas realizadas entre 25 e 168 horas após a administração.</p>
+                            <p style="margin: 0.4rem 0 0; font-size: 0.9rem; color: var(--text-secondary);" data-i18n="samplingHelp">Introduza o intervalo entre a administração e a colheita. A estimativa está disponível apenas para colheitas realizadas entre 25 e 168 horas após a administração.</p>
                             <div class="field-error-message" id="sampling-error"></div>
                         </div>
-                    </div>
-
-                    <div class="workflow-step hidden" id="weekly-step-3">
-                        <div class="step-badge">
-                            <span data-i18n="step3Badge">PASSO 3</span>
-                        </div>
-                        <div class="step-header-box">
-                            <h2 class="step-header-box__title" data-i18n="step3Title">Enquadrar o resultado para titulação</h2>
-                            <p class="step-header-box__desc" data-i18n="step3Desc">Introduza a dose atual de somapacitano e consulte o enquadramento baseado no SDS médio semanal estimado e nas recomendações do RCM.</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="currentDose">Dose atual de somapacitano*</label>
-                            <div class="input-wrapper" style="align-items: center; gap: 0.75rem;">
-                                <input type="text" id="currentDose" name="currentDose" placeholder="Introduza a dose atual" inputmode="decimal" autocomplete="off">
-                                <div class="unit-select" style="width: 150px; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #fff; text-align: center;">mg/kg/semana</div>
-                            </div>
-                        </div>
-                        <div class="form-group hidden" id="second-consecutive-group">
-                            <label for="secondConsecutiveResult">Este é o segundo resultado consecutivo de IGF-1 acima de +2 SDS, avaliado após uma administração subsequente de somapacitano?*</label>
-                            <select id="secondConsecutiveResult" name="secondConsecutiveResult">
-                                <option value="" disabled selected hidden>Selecione uma opção</option>
-                                <option value="sim">Sim</option>
-                                <option value="nao">Não</option>
-                                <option value="naosei">Não sei</option>
-                            </select>
-                        </div>
                         <div class="weekly-result-card hidden" id="weekly-result-card">
-                            <div class="weekly-result-title">SDS médio semanal estimado de IGF-1</div>
+                            <div class="weekly-result-title" data-i18n="weeklyAverageTitle">SDS médio semanal estimado de IGF-1</div>
                             <div class="weekly-result-value" id="weekly-sds-value">—</div>
                             <div class="weekly-result-interpretation" id="weekly-sds-interpretation"></div>
-                            <div class="weekly-result-hint" id="weekly-sds-recommended-range">Intervalo recomendado: −2 a +2 SDS, preferencialmente próximo de 0.</div>
+                            <div class="weekly-result-hint" id="weekly-sds-recommended-range" data-i18n="recommendedRange">Intervalo recomendado: −2 a +2 SDS, preferencialmente próximo de 0.</div>
                             <div class="weekly-result-prediction" id="weekly-sds-prediction"></div>
                             <div class="weekly-visual">
                                 <div class="weekly-visual-track">
@@ -1473,27 +1440,52 @@ footer p {
                                 </div>
                             </div>
                             <div class="weekly-detail-toggle">
-                                <button type="button" id="weekly-details-toggle">Como foi calculado este resultado?</button>
+                                <button type="button" id="weekly-details-toggle" data-i18n="weeklyDetailsToggle">Como foi calculado este resultado?</button>
                                 <div id="weekly-details" class="hidden">
-                                    <p><strong>SDS de IGF-1 medido:</strong> <span id="details-measured-sds">—</span></p>
-                                    <p><strong>Tempo após a administração:</strong> <span id="details-hours">—</span></p>
-                                    <p><strong>Intervalo temporal aplicado:</strong> <span id="details-range">—</span></p>
-                                    <p><strong>Ajuste temporal aplicado:</strong> <span id="details-adjustment">—</span></p>
-                                    <p><strong>SDS médio semanal estimado:</strong> <span id="details-estimate">—</span></p>
-                                    <p><strong>Intervalo de previsão da estimativa — 90%:</strong> <span id="details-prediction">—</span></p>
+                                    <p><strong data-i18n="detailsMeasuredLabel">SDS de IGF-1 medido:</strong> <span id="details-measured-sds">—</span></p>
+                                    <p><strong data-i18n="detailsHoursLabel">Tempo após a administração:</strong> <span id="details-hours">—</span></p>
+                                    <p><strong data-i18n="detailsRangeLabel">Intervalo temporal aplicado:</strong> <span id="details-range">—</span></p>
+                                    <p><strong data-i18n="detailsAdjustmentLabel">Ajuste temporal aplicado:</strong> <span id="details-adjustment">—</span></p>
+                                    <p><strong data-i18n="detailsEstimateLabel">SDS médio semanal estimado:</strong> <span id="details-estimate">—</span></p>
+                                    <p><strong data-i18n="detailsPredictionLabel">Intervalo de previsão da estimativa — 90%:</strong> <span id="details-prediction">—</span></p>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="workflow-step hidden" id="weekly-step-3">
+                        <div class="step-badge">
+                            <span data-i18n="step3Badge">PASSO 3</span>
+                        </div>
+                        <div class="step-header-box">
+                            <h2 class="step-header-box__title" data-i18n="step3Title">Enquadrar o resultado para titulação</h2>
+                            <p class="step-header-box__desc" data-i18n="step3Desc">Introduza a dose atual de somapacitano e consulte o enquadramento baseado no SDS médio semanal estimado e nas recomendações do RCM.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="currentDose" data-i18n="currentDoseLabel">Dose atual de somapacitano*</label>
+                            <div class="input-wrapper" style="align-items: center; gap: 0.75rem;">
+                                <input type="text" id="currentDose" name="currentDose" placeholder="Introduza a dose atual" data-i18n-placeholder="currentDosePlaceholder" inputmode="decimal" autocomplete="off">
+                                <div class="unit-select" id="dose-unit" style="width: 150px; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #fff; text-align: center;" data-i18n="doseUnit">mg/kg/semana</div>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="second-consecutive-group">
+                            <label for="secondConsecutiveResult" data-i18n="secondResultLabel">Este é o segundo resultado consecutivo de IGF-1 acima de +2 SDS, avaliado após uma administração subsequente de somapacitano?*</label>
+                            <select id="secondConsecutiveResult" name="secondConsecutiveResult">
+                                <option value="" disabled selected hidden data-i18n="selectOption">Selecione uma opção</option>
+                                <option value="sim" data-i18n="yesOption">Sim</option>
+                                <option value="nao" data-i18n="noOption">Não</option>
+                                <option value="naosei" data-i18n="unknownOption">Não sei</option>
+                            </select>
+                        </div>
                         <div class="guidance-card" id="titration-guidance-card"></div>
                         <div class="clinical-practice-notice" id="clinical-practice-notice">
-                            <strong>Sugestão para a prática clínica</strong>
-                            A orientação apresentada baseia-se no SDS médio semanal estimado e nas recomendações do RCM. Antes de alterar a dose, considere também a velocidade de crescimento, o peso corporal, a resposta clínica, a adesão, a tolerabilidade e as reações adversas.
-                            A ferramenta não substitui o julgamento clínico.
+                            <strong data-i18n="clinicalPracticeTitle">Sugestão para a prática clínica</strong>
+                            <span data-i18n="clinicalPracticeText">A orientação apresentada baseia-se no SDS médio semanal estimado e nas recomendações do RCM. Antes de alterar a dose, considere também a velocidade de crescimento, o peso corporal, a resposta clínica, a adesão, a tolerabilidade e as reações adversas. A ferramenta não substitui o julgamento clínico.</span>
                         </div>
                     </div>
 
                     <div class="form-actions">
-                        <button type="button" id="clear-all-btn" class="secondary-btn">Limpar todos os dados</button>
+                        <button type="button" id="clear-all-btn" class="secondary-btn" data-i18n="clearAllBtn">Limpar todos os dados</button>
                     </div>
 
                     <div class="result-actions"
@@ -1502,16 +1494,14 @@ footer p {
                             style="background: white; color: var(--nn-blue); border: 2px solid var(--nn-blue); padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">Descarregar
                             PDF</button>
                     </div>
-                    <div id="export-status" class="export-status" role="status" aria-live="polite"></div>
                 </div>
 
                 <div class="modal-backdrop" id="steady-state-modal" hidden>
                     <div class="modal-card">
-                        <h2>Avaliação de estado de equilíbrio incompleta</h2>
-                        <p>Para aplicar a estimativa do SDS médio semanal de IGF-1 em doentes com somapacitano, é necessário que o doente tenha recebido pelo menos duas administrações semanais consecutivas na dose atual.</p>
-                        <p>Se a condição de estado de equilíbrio não for satisfeita, a estimativa não é válida e a titulação deve ser baseada em avaliação clínica individualizada e consulta do RCM.</p>
+                        <h2 data-i18n="steadyStateModalTitle">Avaliação de estado de equilíbrio incompleta</h2>
+                        <p data-i18n="steadyStateModalText">Para aplicar a estimativa do SDS médio semanal de IGF-1 em doentes com somapacitano, é necessário que o doente tenha recebido pelo menos duas administrações semanais consecutivas na dose atual. Se a condição de estado de equilíbrio não for satisfeita, a estimativa não é válida e a titulação deve ser baseada em avaliação clínica individualizada e consulta do RCM.</p>
                         <div class="modal-actions">
-                            <button type="button" id="steady-state-modal-close">Fechar</button>
+                            <button type="button" id="steady-state-modal-close" data-i18n="closeBtn">Fechar</button>
                         </div>
                     </div>
                 </div>
@@ -2529,15 +2519,43 @@ document.addEventListener('DOMContentLoaded', () => {
             cnnhcNoticeText: "A <em>Comissão Nacional para a Normalização da Hormona do Crescimento (CNNHC)</em> do Infarmed reitera que <strong>não existe uma tabela universal de IGF-1</strong>. Os valores são estritamente dependentes do método de ensaio utilizado. A avaliação clínica oficial em Portugal requer a consulta obrigatória dos intervalos de referência validados e emitidos pelo laboratório que realizou a análise.",
             infoSourcesTitle: "Fontes dos Dados (Aproximações)",
             infoSourcesText: "Esta calculadora demonstra distribuições estimadas baseadas nas calibrações de referência (ex: OMS 02/254) presentes na literatura para os seguintes ensaios. Adultos são incluídos apenas quando existem intervalos bibliográficos explícitos:",
-            interpLow: "Abaixo do Intervalo Normal (Potencial Deficiência)",
-            interpHigh: "Acima do Intervalo Normal (Potencial Excesso)",
-            interpBorder: "Limítrofe Normal",
-            interpNormal: "Intervalo Normal",
+            interpLow: "Abaixo do intervalo de referência",
+            interpHigh: "Acima do intervalo de referência",
+            interpBorder: "Próximo do limite do intervalo de referência",
+            interpNormal: "Dentro do intervalo de referência",
+            resultWithin: "Dentro do intervalo de referência",
+            samplingIntegerError: "Não é possível realizar a estimativa. Introduza um valor inteiro em horas.",
+            samplingRangeError: "Não é possível realizar a estimativa. A estimativa do SDS médio semanal é aplicável apenas a colheitas realizadas entre 25 e 168 horas após a administração de somapacitano. Não será efetuada qualquer extrapolação.",
+            guidanceWithinTitle: "Dentro do intervalo recomendado",
+            guidanceWithinText: "O SDS médio semanal estimado encontra-se entre −2 e +2, preferencialmente próximo de 0.",
+            guidanceWithinNote: "Não é apresentada uma alteração automática da dose. A decisão terapêutica deve integrar a velocidade de crescimento, o peso corporal, a resposta clínica, a adesão, a tolerabilidade e as reações adversas.",
+            guidanceAboveTitle: "Resultado acima do intervalo recomendado",
+            guidanceAboveFollowup: "De acordo com o RCM, o IGF-1 deve ser reavaliado após uma administração subsequente de somapacitano.",
+            guidanceAboveNoChange: "Não é apresentada uma proposta de redução da dose nesta fase.",
+            guidanceConfirmedTitle: "Orientação baseada no RCM",
+            guidanceConfirmedIntro: "O IGF-1 permaneceu acima de +2 SDS após reavaliação. O RCM recomenda uma redução de 0,04 mg/kg/semana.",
+            guidanceDoseLabel: "Dose atual",
+            guidanceAdjustmentLabel: "Ajuste indicado no RCM",
+            guidanceResultDoseLabel: "Dose resultante estimada",
+            guidanceInvalidDose: "Não é possível calcular uma dose resultante positiva através desta regra. Reveja a dose introduzida e consulte o RCM antes de proceder a qualquer alteração.",
+            guidanceEnterDose: "Introduza uma dose atual válida para visualizar a orientação resultante.",
+            guidanceMoreReduction: "Mais do que uma redução da dose poderá ser necessária em alguns doentes, devendo cada decisão ser individualmente avaliada.",
+            guidanceBelowTitle: "Resultado abaixo do intervalo recomendado",
+            guidanceBelowNoIncrease: "Não é possível recomendar automaticamente um aumento da dose com base apenas no IGF-1.",
+            guidanceBelowReview: "Avalie a velocidade de crescimento, a adesão, o peso corporal, a resposta clínica, a tolerabilidade, as reações adversas e o histórico de titulação antes de considerar qualquer ajuste.",
+            guidanceBelowIncrease: "Em doentes cuja dose tenha sido previamente reduzida e cujo crescimento não seja satisfatório, o RCM permite aumentos graduais, de acordo com a tolerabilidade, com incrementos não superiores a 0,02 mg/kg/semana e até à dose máxima indicada no RCM.",
+            guidanceBelowDose: "Dose atual de somapacitano",
+            guidanceBelowMargin: "Margem até à dose máxima recomendada",
+            guidanceBelowConsider: "Caso a criança não esteja a crescer como esperado e a tolerabilidade seja adequada, poderá ser considerada titulação gradual, de acordo com avaliação clínica.",
+            guidanceBelowMax: "Os aumentos não devem exceder 0,02 mg/kg/semana e a dose máxima recomendada em DHC pediátrica é 0,16 mg/kg/semana.",
+            guidanceAtMax: "A dose pediátrica máxima recomendada é 0,16 mg/kg/semana. Não é sugerido aumento acima desta dose.",
+            guidanceReview: "Reveja clinicamente a adesão, a técnica de administração, o crescimento, o peso, a tolerabilidade, o tempo entre administração e colheita e o relatório laboratorial.",
             errorData: "Dados de referência não disponíveis para esta combinação.",
             errorAgeMax: "A idade máxima permitida nesta calculadora é 70 anos.",
             validationSummary: "Preencha os campos obrigatórios assinalados para prosseguir com o cálculo.",
             validationKit: "Selecione o kit de ensaio ou método.",
             validationAge: "Introduza uma idade válida.",
+            validationAgeRequired: "Selecione a idade para prosseguir com o cálculo.",
             validationSex: "Selecione o sexo.",
             validationIgfValue: "Introduza um resultado de IGF-1 válido.",
             unsupportedReferenceData: "Não existem dados de referência disponíveis para a combinação selecionada. Reveja o kit/método, a idade e o sexo.",
@@ -2546,10 +2564,53 @@ document.addEventListener('DOMContentLoaded', () => {
             errorGenericPediatricAdult: "A Média Genérica Pediátrica aplica-se apenas a idades de 0 a 21 anos. Para adultos, selecione Média Genérica Adulta.",
             errorGenericAdultPediatric: "A Média Genérica Adulta aplica-se apenas a idades superiores a 21 anos.",
             placeholderValue: "Ex: 250",
+            kitPlaceholder: "Selecione o kit de ensaio ou método",
+            agePlaceholder: "Selecione a idade",
+            sexPlaceholder: "Selecione o sexo",
+            igfValuePlaceholder: "Introduza o resultado de IGF-1",
             genericKit: "Média Genérica Pediátrica (Aproximação global com os resultados atuais de pediatria)",
             genericAdultKit: "Média Genérica Adulta (Aproximação global)",
             chartTitle: "IGF-1 por idade: média e intervalo de referência",
+            chartPatient: "Doente",
+            chartUpperLimit: "Limite superior (+2 SDS)",
+            chartMean: "Média",
+            chartLowerLimit: "Limite inferior (-2 SDS)",
+            chartAge: "Idade",
+            chartPatientIgf1: "IGF-1 do doente",
+            calculatedSds: "SDS calculado",
+            interpretationLabel: "Interpretação",
+            resultBelow: "Abaixo do intervalo de referência",
+            resultAbove: "Acima do intervalo de referência",
             downloadPdfBtn: "Descarregar PDF",
+            sdsAutoHelp: "O SDS será calculado automaticamente.",
+            selectOption: "Selecione uma opção",
+            yesOption: "Sim",
+            noOption: "Não",
+            unknownOption: "Não sei",
+            steadyStateLabel: "O doente recebeu pelo menos duas administrações semanais consecutivas de somapacitano na dose atual?*",
+            samplingHoursLabel: "Tempo decorrido entre a última administração de somapacitano e a colheita da amostra de sangue*",
+            samplingHoursPlaceholder: "Introduza o número de horas",
+            hoursUnit: "horas",
+            samplingHelp: "Introduza o intervalo entre a administração e a colheita. A estimativa está disponível apenas para colheitas realizadas entre 25 e 168 horas após a administração.",
+            currentDoseLabel: "Dose atual de somapacitano*",
+            currentDosePlaceholder: "Introduza a dose atual",
+            doseUnit: "mg/kg/semana",
+            secondResultLabel: "Este é o segundo resultado consecutivo de IGF-1 acima de +2 SDS, avaliado após uma administração subsequente de somapacitano?*",
+            weeklyAverageTitle: "SDS médio semanal estimado de IGF-1",
+            recommendedRange: "Intervalo recomendado: −2 a +2 SDS, preferencialmente próximo de 0.",
+            weeklyDetailsToggle: "Como foi calculado este resultado?",
+            detailsMeasuredLabel: "SDS de IGF-1 medido:",
+            detailsHoursLabel: "Tempo após a administração:",
+            detailsRangeLabel: "Intervalo temporal aplicado:",
+            detailsAdjustmentLabel: "Ajuste temporal aplicado:",
+            detailsEstimateLabel: "SDS médio semanal estimado:",
+            detailsPredictionLabel: "Intervalo de previsão da estimativa — 90%:",
+            clinicalPracticeTitle: "Sugestão para a prática clínica",
+            clinicalPracticeText: "A orientação apresentada baseia-se no SDS médio semanal estimado e nas recomendações do RCM. Antes de alterar a dose, considere também a velocidade de crescimento, o peso corporal, a resposta clínica, a adesão, a tolerabilidade e as reações adversas. A ferramenta não substitui o julgamento clínico.",
+            clearAllBtn: "Limpar todos os dados",
+            steadyStateModalTitle: "Avaliação de estado de equilíbrio incompleta",
+            steadyStateModalText: "Para aplicar a estimativa do SDS médio semanal de IGF-1 em doentes com somapacitano, é necessário que o doente tenha recebido pelo menos duas administrações semanais consecutivas na dose atual. Se a condição de estado de equilíbrio não for satisfeita, a estimativa não é válida e a titulação deve ser baseada em avaliação clínica individualizada e consulta do RCM.",
+            closeBtn: "Fechar",
             therapyModuleTitle: "Ajuste de SDS e orientação com somapacitano",
             therapyModuleIntro: "Módulo opcional em 3 passos: mantém o SDS calculado, aplica o ajuste temporal quando apropriado e resume o próximo passo terapêutico segundo RCM/diretrizes.",
             preAnalyticalHoursLabel: "Tempo após colheita da amostra (horas)",
@@ -2632,15 +2693,43 @@ document.addEventListener('DOMContentLoaded', () => {
             infoSourcesTitle: "Data Sources (Approximations)",
             infoSourcesText: "This calculator demonstrates estimated distributions based on standard reference calibrations (e.g., WHO 02/254) present in literature for the following assays. Adults are included only when explicit bibliographic intervals are available:",
             footerDisclaimer: "For academic and demonstration purposes. Do not use for definitive medical diagnosis. Consult your laboratory's official analytical report.",
-            interpLow: "Below Normal Range (Potential Deficiency)",
-            interpHigh: "Above Normal Range (Potential Excess)",
-            interpBorder: "Borderline Normal",
-            interpNormal: "Normal Range",
+            interpLow: "Below the reference range",
+            interpHigh: "Above the reference range",
+            interpBorder: "Near the reference-range boundary",
+            interpNormal: "Within the reference range",
+            resultWithin: "Within the reference range",
+            samplingIntegerError: "The estimate cannot be calculated. Enter an integer number of hours.",
+            samplingRangeError: "The estimate cannot be calculated. The weekly average SDS estimate is applicable only to samples collected between 25 and 168 hours after somapacitan administration. No extrapolation will be performed.",
+            guidanceWithinTitle: "Within the recommended range",
+            guidanceWithinText: "The estimated weekly average SDS is between −2 and +2, preferably close to 0.",
+            guidanceWithinNote: "No automatic dose change is presented. The treatment decision should integrate growth velocity, body weight, clinical response, adherence, tolerability and adverse reactions.",
+            guidanceAboveTitle: "Result above the recommended range",
+            guidanceAboveFollowup: "According to the SmPC, IGF-1 should be reassessed after a subsequent somapacitan administration.",
+            guidanceAboveNoChange: "No dose reduction proposal is presented at this stage.",
+            guidanceConfirmedTitle: "SmPC-based guidance",
+            guidanceConfirmedIntro: "IGF-1 remained above +2 SDS after reassessment. The SmPC recommends a reduction of 0.04 mg/kg/week.",
+            guidanceDoseLabel: "Current dose",
+            guidanceAdjustmentLabel: "SmPC adjustment",
+            guidanceResultDoseLabel: "Estimated resulting dose",
+            guidanceInvalidDose: "A positive resulting dose cannot be calculated using this rule. Review the entered dose and consult the SmPC before making any change.",
+            guidanceEnterDose: "Enter a valid current dose to view the resulting guidance.",
+            guidanceMoreReduction: "More than one dose reduction may be required in some patients; each decision should be assessed individually.",
+            guidanceBelowTitle: "Result below the recommended range",
+            guidanceBelowNoIncrease: "An automatic dose increase cannot be recommended based on IGF-1 alone.",
+            guidanceBelowReview: "Assess growth velocity, adherence, body weight, clinical response, tolerability, adverse reactions and titration history before considering any adjustment.",
+            guidanceBelowIncrease: "In patients whose dose was previously reduced and whose growth is unsatisfactory, the SmPC allows gradual increases according to tolerability, with increments no greater than 0.02 mg/kg/week and up to the maximum dose specified in the SmPC.",
+            guidanceBelowDose: "Current somapacitan dose",
+            guidanceBelowMargin: "Remaining margin to the maximum recommended dose",
+            guidanceBelowConsider: "If the child is not growing as expected and tolerability is adequate, gradual titration may be considered according to clinical assessment.",
+            guidanceBelowMax: "Dose increases should not exceed 0.02 mg/kg/week and the maximum recommended dose in paediatric GHD is 0.16 mg/kg/week.",
+            guidanceAtMax: "The maximum recommended paediatric dose is 0.16 mg/kg/week. An increase above this dose is not suggested.",
+            guidanceReview: "Clinically review adherence, administration technique, growth, body weight, tolerability, the interval between administration and collection, and the laboratory report.",
             errorData: "Reference data not available for this combination.",
             errorAgeMax: "The maximum age allowed in this calculator is 70 years.",
             validationSummary: "Please complete the required fields marked below to proceed with the calculation.",
             validationKit: "Please select the assay kit or method.",
             validationAge: "Please enter a valid age.",
+            validationAgeRequired: "Select an age to continue with the calculation.",
             validationSex: "Please select the sex.",
             validationIgfValue: "Please enter a valid IGF-1 result.",
             unsupportedReferenceData: "No reference data are available for the selected combination. Please review the kit/method, age and sex.",
@@ -2649,10 +2738,53 @@ document.addEventListener('DOMContentLoaded', () => {
             errorGenericPediatricAdult: "The Generic Pediatric Average applies only to ages 0 to 21 years. For adults, please select Generic Adult Average.",
             errorGenericAdultPediatric: "The Generic Adult Average applies only to ages above 21 years.",
             placeholderValue: "e.g. 250",
+            kitPlaceholder: "Select the assay kit or method",
+            agePlaceholder: "Select the age",
+            sexPlaceholder: "Select sex",
+            igfValuePlaceholder: "Enter the IGF-1 result",
             genericKit: "Generic Pediatric Average (Global approximation using current pediatric results)",
             genericAdultKit: "Generic Adult Average (Global approximation)",
             chartTitle: "IGF-1 by age: mean and reference interval",
+            chartPatient: "Patient",
+            chartUpperLimit: "Upper limit (+2 SDS)",
+            chartMean: "Mean",
+            chartLowerLimit: "Lower limit (-2 SDS)",
+            chartAge: "Age",
+            chartPatientIgf1: "Patient IGF-1",
+            calculatedSds: "Calculated SDS",
+            interpretationLabel: "Interpretation",
+            resultBelow: "Below the reference range",
+            resultAbove: "Above the reference range",
             downloadPdfBtn: "Download PDF",
+            sdsAutoHelp: "The SDS will be calculated automatically.",
+            selectOption: "Select an option",
+            yesOption: "Yes",
+            noOption: "No",
+            unknownOption: "I do not know",
+            steadyStateLabel: "Has the patient received at least two consecutive weekly administrations of somapacitan at the current dose?*",
+            samplingHoursLabel: "Time elapsed between the last somapacitan administration and blood sample collection*",
+            samplingHoursPlaceholder: "Enter the number of hours",
+            hoursUnit: "hours",
+            samplingHelp: "Enter the interval between administration and sample collection. The estimate is available only for samples collected between 25 and 168 hours after administration.",
+            currentDoseLabel: "Current somapacitan dose*",
+            currentDosePlaceholder: "Enter the current dose",
+            doseUnit: "mg/kg/week",
+            secondResultLabel: "Is this the second consecutive IGF-1 result above +2 SDS, assessed after a subsequent somapacitan administration?*",
+            weeklyAverageTitle: "Estimated weekly mean IGF-1 SDS",
+            recommendedRange: "Recommended range: −2 to +2 SDS, preferably close to 0.",
+            weeklyDetailsToggle: "How was this result calculated?",
+            detailsMeasuredLabel: "Measured IGF-1 SDS:",
+            detailsHoursLabel: "Time after administration:",
+            detailsRangeLabel: "Applied timing interval:",
+            detailsAdjustmentLabel: "Applied temporal adjustment:",
+            detailsEstimateLabel: "Estimated weekly average SDS:",
+            detailsPredictionLabel: "Estimate prediction interval — 90%:",
+            clinicalPracticeTitle: "Clinical practice guidance",
+            clinicalPracticeText: "The information provided is based on the estimated weekly average SDS and SmPC recommendations. Before changing the dose, also consider growth velocity, body weight, clinical response, adherence, tolerability and adverse reactions. The tool does not replace clinical judgement.",
+            clearAllBtn: "Clear all data",
+            steadyStateModalTitle: "Incomplete steady-state assessment",
+            steadyStateModalText: "To apply the estimated weekly average IGF-1 SDS, the patient must have received at least two consecutive weekly administrations at the current dose. If steady state is not confirmed, the estimate is not valid and titration should be based on individual clinical assessment and the SmPC.",
+            closeBtn: "Close",
             therapyModuleTitle: "SDS adjustment and somapacitan guidance",
             therapyModuleIntro: "Optional 3-step module: preserves the calculated SDS, applies timing adjustment when appropriate and summarizes the next therapeutic step according to SmPC/guidelines.",
             preAnalyticalHoursLabel: "Time after sample collection (hours)",
@@ -2723,6 +2855,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateLanguage(lang) {
+        lang = String(lang || 'pt').toLowerCase().startsWith('en') ? 'en' : 'pt';
         currentLang.code = lang;
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
@@ -2730,7 +2863,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.innerHTML = translations[lang][key];
             }
         });
-        document.getElementById('igfValue').placeholder = translations[lang].placeholderValue;
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations[lang][key]) el.placeholder = translations[lang][key];
+        });
         // Update browser tab title
         document.title = lang === 'en'
             ? 'IGF-1 Calculator | Somapacitan Monitoring'
@@ -2892,6 +3028,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const titleText = translations[currentLang.code].chartTitle;
+        const chartText = translations[currentLang.code];
 
         igfChartInstance = new Chart(ctx, {
             type: 'line',
@@ -2899,7 +3036,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: ages,
                 datasets: [
                     {
-                        label: 'Doente',
+                        label: chartText.chartPatient,
                         data: patientData,
                         backgroundColor: markerColor,
                         borderColor: markerColor,
@@ -2910,7 +3047,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         zIndex: 10
                     },
                     {
-                        label: 'Limite superior (+2 SDS)',
+                        label: chartText.chartUpperLimit,
                         data: upperBounds,
                         borderColor: 'rgba(100, 116, 139, 0.55)',
                         borderWidth: 1.5,
@@ -2920,7 +3057,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         cubicInterpolationMode: 'monotone'
                     },
                     {
-                        label: 'Média',
+                        label: chartText.chartMean,
                         data: means,
                         borderColor: '#642F6C',
                         borderWidth: 2,
@@ -2929,7 +3066,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         cubicInterpolationMode: 'monotone'
                     },
                     {
-                        label: 'Limite inferior (-2 SDS)',
+                        label: chartText.chartLowerLimit,
                         data: lowerBounds,
                         borderColor: 'rgba(100, 116, 139, 0.55)',
                         borderWidth: 1.5,
@@ -2974,11 +3111,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         displayColors: false,
                         callbacks: {
                             title: function(items) {
-                                return `Idade: ${items[0].label} anos`;
+                                return `${chartText.chartAge}: ${items[0].label} ${chartText.years}`;
                             },
                             label: function(context) {
                                 if (context.datasetIndex === 0 && context.parsed.y !== null) {
-                                    return `IGF-1 do doente: ${Number(context.parsed.y).toFixed(1)} ng/mL`;
+                                    return `${chartText.chartPatientIgf1}: ${Number(context.parsed.y).toFixed(1)} ng/mL`;
                                 }
                                 return '';
                             },
@@ -2991,15 +3128,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                 const lowerValue = lowerBounds[patientAgeIndex];
                                 const upperValue = upperBounds[patientAgeIndex];
                                 const interpretation = Number.isFinite(patientSds) && patientSds >= -1 && patientSds <= 1
-                                    ? 'Dentro do intervalo de referência'
+                                    ? chartText.resultWithin
                                     : Number.isFinite(patientSds) && patientSds < -1
-                                        ? 'Abaixo do intervalo de referência'
-                                        : 'Acima do intervalo de referência';
+                                        ? chartText.resultBelow
+                                        : chartText.resultAbove;
                                 const footerLines = [];
-                                if (Number.isFinite(meanValue)) footerLines.push(`Média: ${meanValue.toFixed(1)} ng/mL`);
-                                if (Number.isFinite(lowerValue) && Number.isFinite(upperValue)) footerLines.push(`Intervalo de referência: ${lowerValue.toFixed(1)}–${upperValue.toFixed(1)} ng/mL`);
-                                footerLines.push(`SDS calculado: ${Number.isFinite(patientSds) ? patientSds.toFixed(2) : '-'}`);
-                                footerLines.push(`Interpretação: ${interpretation}`);
+                                if (Number.isFinite(meanValue)) footerLines.push(`${chartText.chartMean}: ${meanValue.toFixed(1)} ng/mL`);
+                                if (Number.isFinite(lowerValue) && Number.isFinite(upperValue)) footerLines.push(`${chartText.referenceRange}: ${lowerValue.toFixed(1)}–${upperValue.toFixed(1)} ng/mL`);
+                                footerLines.push(`${chartText.calculatedSds}: ${Number.isFinite(patientSds) ? patientSds.toFixed(2) : '-'}`);
+                                footerLines.push(`${chartText.interpretationLabel}: ${interpretation}`);
                                 return footerLines;
                             }
                         }
@@ -3115,7 +3252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sdsScoreEl.textContent = '0.00';
         resetWeeklyWorkflow();
         sdsScoreEl.className = 'sds-score';
-        interpretationEl.textContent = 'Intervalo Normal';
+        interpretationEl.textContent = translations[currentLang.code].interpNormal;
         interpretationEl.className = 'sds-interpretation';
         convertedValueEl.textContent = '-';
         refRangeEl.textContent = '-';
@@ -3206,18 +3343,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function formatNumberPt(value, decimals = 2) {
         if (!Number.isFinite(value)) return '—';
-        return Number(value).toFixed(decimals).replace('.', ',');
+        return new Intl.NumberFormat(currentLang.code === 'en' ? 'en-US' : 'pt-PT', {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+        }).format(Number(value));
     }
 
     function getWeeklyAdjustment(hours) {
         const numericHours = Number(hours);
         if (!Number.isFinite(numericHours)) return null;
-        if (numericHours >= 25 && numericHours <= 48) return { label: '25–48 horas', adjustment: -0.8, pi: 0.5 };
-        if (numericHours >= 49 && numericHours <= 72) return { label: '49–72 horas', adjustment: -1.0, pi: 0.6 };
-        if (numericHours >= 73 && numericHours <= 96) return { label: '73–96 horas', adjustment: -0.5, pi: 0.4 };
-        if (numericHours >= 97 && numericHours <= 120) return { label: '97–120 horas', adjustment: 0, pi: null };
-        if (numericHours >= 121 && numericHours <= 144) return { label: '121–144 horas', adjustment: 0.7, pi: 0.4 };
-        if (numericHours >= 145 && numericHours <= 168) return { label: '145–168 horas', adjustment: 1.1, pi: 0.6 };
+        const unit = translations[currentLang.code].hoursUnit;
+        if (numericHours >= 25 && numericHours <= 48) return { label: `25–48 ${unit}`, adjustment: -0.8, pi: 0.5 };
+        if (numericHours >= 49 && numericHours <= 72) return { label: `49–72 ${unit}`, adjustment: -1.0, pi: 0.6 };
+        if (numericHours >= 73 && numericHours <= 96) return { label: `73–96 ${unit}`, adjustment: -0.5, pi: 0.4 };
+        if (numericHours >= 97 && numericHours <= 120) return { label: `97–120 ${unit}`, adjustment: 0, pi: null };
+        if (numericHours >= 121 && numericHours <= 144) return { label: `121–144 ${unit}`, adjustment: 0.7, pi: 0.4 };
+        if (numericHours >= 145 && numericHours <= 168) return { label: `145–168 ${unit}`, adjustment: 1.1, pi: 0.6 };
         return null;
     }
 
@@ -3231,13 +3372,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderWeeklyResult(estimate) {
         if (!weeklyResultCard || !weeklySdsValueEl || !weeklyInterpretationEl || !weeklyPredictionEl) return;
+        const statusText = estimate.status === 'belowRecommended'
+            ? translations[currentLang.code].guidanceBelowTitle
+            : estimate.status === 'aboveRecommended'
+                ? translations[currentLang.code].guidanceAboveTitle
+                : translations[currentLang.code].guidanceWithinTitle;
         weeklyResultCard.classList.remove('hidden');
         weeklySdsValueEl.textContent = formatNumberPt(estimate.sds, 2);
-        weeklyInterpretationEl.textContent = estimate.interpretation;
-        weeklyHintEl.textContent = 'Intervalo recomendado: −2 a +2 SDS, preferencialmente próximo de 0.';
+        weeklyInterpretationEl.textContent = statusText;
+        weeklyHintEl.textContent = translations[currentLang.code].recommendedRange;
         weeklyPredictionEl.textContent = estimate.predictionText;
         detailsMeasuredEl.textContent = formatNumberPt(measuredSdsValue, 2);
-        detailsHoursEl.textContent = `${estimate.hours} horas`;
+        detailsHoursEl.textContent = `${estimate.hours} ${translations[currentLang.code].hoursUnit}`;
         detailsRangeEl.textContent = estimate.rangeLabel;
         detailsAdjustmentEl.textContent = estimate.adjustmentLabel;
         detailsEstimateEl.textContent = formatNumberPt(estimate.sds, 2);
@@ -3247,38 +3393,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateTitrationCard(estimate) {
         if (!titrationGuidanceCard) return;
+        const langDict = translations[currentLang.code];
         const currentDose = parseNumericInputValue(currentDoseInput.value);
         const answer = secondConsecutiveResultSelect.value;
         const lines = [];
 
         if (estimate.sds >= -2 && estimate.sds <= 2) {
-            lines.push('<div class="guidance-heading">Dentro do intervalo recomendado</div>');
-            lines.push('<p>O SDS médio semanal estimado encontra-se entre −2 e +2, preferencialmente próximo de 0.</p>');
-            lines.push('<p>Não é apresentada uma alteração automática da dose. A decisão terapêutica deve integrar a velocidade de crescimento, o peso corporal, a resposta clínica, a adesão, a tolerabilidade e as reações adversas.</p>');
+            lines.push(`<div class="guidance-heading">${langDict.guidanceWithinTitle}</div>`);
+            lines.push(`<p>${langDict.guidanceWithinText}</p>`);
+            lines.push(`<p>${langDict.guidanceWithinNote}</p>`);
         } else if (estimate.sds > 2) {
             if (answer === 'sim') {
-                lines.push('<div class="guidance-heading">Orientação baseada no RCM</div>');
-                lines.push('<p>O IGF-1 permaneceu acima de +2 SDS após reavaliação. O RCM recomenda uma redução de 0,04 mg/kg/semana.</p>');
-                lines.push(`<p><strong>Dose atual:</strong> ${Number.isFinite(currentDose) ? formatNumberPt(currentDose, 3) : '—'} mg/kg/semana</p>`);
-                lines.push('<p><strong>Ajuste indicado no RCM:</strong> −0,04 mg/kg/semana</p>');
+                lines.push(`<div class="guidance-heading">${langDict.guidanceConfirmedTitle}</div>`);
+                lines.push(`<p>${langDict.guidanceConfirmedIntro}</p>`);
+                lines.push(`<p><strong>${langDict.guidanceDoseLabel}:</strong> ${Number.isFinite(currentDose) ? formatNumberPt(currentDose, 3) : '—'} ${langDict.doseUnit}</p>`);
+                lines.push(`<p><strong>${langDict.guidanceAdjustmentLabel}:</strong> −0,04 ${langDict.doseUnit}</p>`);
                 if (Number.isFinite(currentDose) && currentDose > 0.04) {
-                    lines.push(`<p><strong>Dose resultante estimada:</strong> ${formatNumberPt(currentDose - 0.04, 3)} mg/kg/semana</p>`);
+                    lines.push(`<p><strong>${langDict.guidanceResultDoseLabel}:</strong> ${formatNumberPt(currentDose - 0.04, 3)} ${langDict.doseUnit}</p>`);
                 } else if (Number.isFinite(currentDose) && currentDose <= 0.04) {
-                    lines.push('<p>Não é possível calcular uma dose resultante positiva através desta regra. Reveja a dose introduzida e consulte o RCM antes de proceder a qualquer alteração.</p>');
+                    lines.push(`<p>${langDict.guidanceInvalidDose}</p>`);
                 } else {
-                    lines.push('<p>Introduza uma dose atual válida para visualizar a orientação resultante.</p>');
+                    lines.push(`<p>${langDict.guidanceEnterDose}</p>`);
                 }
-                lines.push('<p>Mais do que uma redução da dose poderá ser necessária em alguns doentes, devendo cada decisão ser individualmente avaliada.</p>');
+                lines.push(`<p>${langDict.guidanceMoreReduction}</p>`);
             } else {
-                lines.push('<div class="guidance-heading">Resultado acima do intervalo recomendado</div>');
-                lines.push('<p>De acordo com o RCM, o IGF-1 deve ser reavaliado após uma administração subsequente de somapacitano.</p>');
-                lines.push('<p>Não é apresentada uma proposta de redução da dose nesta fase.</p>');
+                lines.push(`<div class="guidance-heading">${langDict.guidanceAboveTitle}</div>`);
+                lines.push(`<p>${langDict.guidanceAboveFollowup}</p>`);
+                lines.push(`<p>${langDict.guidanceAboveNoChange}</p>`);
             }
         } else {
-            lines.push('<div class="guidance-heading">Resultado abaixo do intervalo recomendado</div>');
-            lines.push('<p>Não é possível recomendar automaticamente um aumento da dose com base apenas no IGF-1.</p>');
-            lines.push('<p>Avalie a velocidade de crescimento, a adesão, o peso corporal, a resposta clínica, a tolerabilidade, as reações adversas e o histórico de titulação antes de considerar qualquer ajuste.</p>');
-            lines.push('<p>Em doentes cuja dose tenha sido previamente reduzida e cujo crescimento não seja satisfatório, o RCM permite aumentos graduais, de acordo com a tolerabilidade, com incrementos não superiores a 0,02 mg/kg/semana e até à dose máxima indicada no RCM.</p>');
+            lines.push(`<div class="guidance-heading">${langDict.guidanceBelowTitle}</div>`);
+            const maximumDose = 0.16;
+            const hasDose = Number.isFinite(currentDose) && currentDose > 0;
+            const remainingMargin = hasDose ? Math.max(0, maximumDose - currentDose) : NaN;
+            lines.push(`<p><strong>${langDict.guidanceBelowDose}:</strong> ${hasDose ? `${formatNumberPt(currentDose, 3)} ${langDict.doseUnit}` : '—'}</p>`);
+            lines.push(`<p><strong>${langDict.guidanceBelowMargin}:</strong> ${hasDose ? `${formatNumberPt(remainingMargin, 3)} ${langDict.doseUnit}` : '—'}</p>`);
+            if (hasDose && currentDose < maximumDose) {
+                lines.push(`<p>${langDict.guidanceBelowConsider} ${langDict.guidanceBelowMax}</p>`);
+            } else {
+                lines.push(`<p>${langDict.guidanceAtMax}</p>`);
+                lines.push(`<p>${langDict.guidanceReview}</p>`);
+            }
+            lines.push(`<p>${langDict.guidanceWithinNote}</p>`);
         }
 
         titrationGuidanceCard.innerHTML = lines.join('');
@@ -3308,7 +3464,7 @@ document.addEventListener('DOMContentLoaded', () => {
         samplingTimeGroup.classList.remove('hidden');
         const hours = parseInt(samplingHoursInput.value, 10);
         if (!Number.isInteger(hours)) {
-            samplingErrorEl.textContent = 'Não é possível realizar a estimativa. Introduza um valor inteiro em horas.';
+            samplingErrorEl.textContent = translations[currentLang.code].samplingIntegerError;
             samplingErrorEl.classList.add('visible');
             if (weeklyResultCard) weeklyResultCard.classList.add('hidden');
             step3Section.classList.add('hidden');
@@ -3319,7 +3475,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (hours < 25 || hours > 168) {
-            samplingErrorEl.textContent = 'Não é possível realizar a estimativa. A estimativa do SDS médio semanal é aplicável apenas a colheitas realizadas entre 25 e 168 horas após a administração de somapacitano. Não será efetuada qualquer extrapolação.';
+            samplingErrorEl.textContent = translations[currentLang.code].samplingRangeError;
             samplingErrorEl.classList.add('visible');
             if (weeklyResultCard) weeklyResultCard.classList.add('hidden');
             step3Section.classList.add('hidden');
@@ -3344,14 +3500,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const estimateSds = measuredSdsValue + adjustment.adjustment;
         const lower = estimateSds - adjustment.pi;
         const upper = estimateSds + adjustment.pi;
-        const interpretation = estimateSds < -2 ? 'Abaixo do intervalo recomendado' : (estimateSds > 2 ? 'Acima do intervalo recomendado' : 'Dentro do intervalo recomendado');
+        const langDict = translations[currentLang.code];
+        const status = estimateSds < -2 ? 'belowRecommended' : (estimateSds > 2 ? 'aboveRecommended' : 'withinRecommended');
         const predictionText = adjustment.pi === null
-            ? 'Intervalo de previsão da estimativa — 90%: não aplicável, uma vez que não foi necessário ajuste temporal.'
-            : `Intervalo de previsão da estimativa — 90%: ${formatNumberPt(lower, 2)} a ${formatNumberPt(upper, 2)}`;
+            ? `${langDict.detailsPredictionLabel} não aplicável, uma vez que não foi necessário ajuste temporal.`
+            : `${langDict.detailsPredictionLabel} ${formatNumberPt(lower, 2)} ${currentLang.code === 'pt' ? 'a' : 'to'} ${formatNumberPt(upper, 2)}`;
 
         currentWeeklyEstimate = {
             sds: estimateSds,
-            interpretation,
+            status,
+            interpretation: status === 'belowRecommended' ? langDict.guidanceBelowTitle : status === 'aboveRecommended' ? langDict.guidanceAboveTitle : langDict.guidanceWithinTitle,
             predictionText,
             hours,
             rangeLabel: adjustment.label,
@@ -3423,7 +3581,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const validationMessages = {
             kit: !kit ? langDict.validationKit : '',
-            age: !ageValue ? 'Selecione a idade para prosseguir com o cálculo.' : (Number.isNaN(age) || age < 0 || age > 70 ? langDict.validationAge : ''),
+            age: !ageValue ? langDict.validationAgeRequired : (Number.isNaN(age) || age < 0 || age > 70 ? langDict.validationAge : ''),
             sex: !sex ? langDict.validationSex : '',
             igfValue: !hasIgfInput ? langDict.validationIgfValue : ''
         };
@@ -3553,7 +3711,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sdsScoreEl.classList.add('status-normal-range');
             interpretationEl.classList.add('status-normal-range');
             resultSection.classList.add('status-normal-range');
-            resultStatusPillEl.textContent = 'Within reference range';
+            resultStatusPillEl.textContent = langDict.resultWithin;
             resultStatusPillEl.classList.add('visible');
             gaugeFill.style.backgroundColor = '#16a34a';
         }
@@ -3571,7 +3729,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatSigned(value, decimals = 2) {
-        const formatted = Number(value).toFixed(decimals);
+        const formatted = formatNumberPt(Number(value), decimals);
         return value > 0 ? `+${formatted}` : formatted;
     }
     function formatClinicalSds(sds) {
@@ -4656,11 +4814,6 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(objectUrl);
     }
 
-    function setExportStatus(message) {
-        const statusEl = document.getElementById('export-status');
-        if (statusEl) statusEl.textContent = message || '';
-    }
-
     async function generateReportPdfBlob() {
         const data = getLatestReportData();
         const pdfBlob = await generatePdfReport(data);
@@ -4675,14 +4828,12 @@ document.addEventListener('DOMContentLoaded', () => {
         button.innerHTML = `<span class="spinner" aria-hidden="true"></span>${currentLang.code === 'pt' ? 'A gerar PDF…' : 'Generating PDF…'}`;
         button.disabled = true;
         button.setAttribute('aria-busy', 'true');
-        setExportStatus('');
 
         try {
             const pdfBlob = await generateReportPdfBlob();
             downloadPdfBlob(pdfBlob, getReportFilename());
         } catch (error) {
             console.error('PDF generation error:', error);
-            setExportStatus('');
         } finally {
             button.innerHTML = originalText;
             button.disabled = false;
