@@ -1426,7 +1426,7 @@ footer p {
                             <div class="weekly-result-value" id="weekly-sds-value">—</div>
                             <div class="weekly-result-interpretation" id="weekly-sds-interpretation"></div>
                             <div class="weekly-result-hint" id="weekly-sds-recommended-range" data-i18n="recommendedRange">Intervalo recomendado: −2 a +2 SDS, preferencialmente próximo de 0.</div>
-                            <div class="weekly-result-prediction" id="weekly-sds-prediction"></div>
+                            <div class="weekly-result-prediction" id="weekly-sds-prediction"><span data-i18n="detailsPredictionLabel">Intervalo de previsão da estimativa — 90%:</span> <span id="weekly-prediction-value"></span></div>
                             <div class="weekly-visual">
                                 <div class="weekly-visual-track">
                                     <div class="weekly-visual-marker" id="weekly-visual-marker"></div>
@@ -3212,6 +3212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const weeklyInterpretationEl = document.getElementById('weekly-sds-interpretation');
     const weeklyHintEl = document.getElementById('weekly-sds-recommended-range');
     const weeklyPredictionEl = document.getElementById('weekly-sds-prediction');
+    const weeklyPredictionValueEl = document.getElementById('weekly-prediction-value');
     const weeklyVisualMarker = document.getElementById('weekly-visual-marker');
     const weeklyDetailsToggle = document.getElementById('weekly-details-toggle');
     const weeklyDetailsPanel = document.getElementById('weekly-details');
@@ -3381,7 +3382,11 @@ document.addEventListener('DOMContentLoaded', () => {
         weeklySdsValueEl.textContent = formatNumberPt(estimate.sds, 2);
         weeklyInterpretationEl.textContent = statusText;
         weeklyHintEl.textContent = translations[currentLang.code].recommendedRange;
-        weeklyPredictionEl.textContent = estimate.predictionText;
+        if (weeklyPredictionValueEl) {
+            weeklyPredictionValueEl.textContent = estimate.predictionText;
+        } else {
+            weeklyPredictionEl.textContent = `${translations[currentLang.code].detailsPredictionLabel} ${estimate.predictionText}`;
+        }
         detailsMeasuredEl.textContent = formatNumberPt(measuredSdsValue, 2);
         detailsHoursEl.textContent = `${estimate.hours} ${translations[currentLang.code].hoursUnit}`;
         detailsRangeEl.textContent = estimate.rangeLabel;
@@ -3503,8 +3508,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const langDict = translations[currentLang.code];
         const status = estimateSds < -2 ? 'belowRecommended' : (estimateSds > 2 ? 'aboveRecommended' : 'withinRecommended');
         const predictionText = adjustment.pi === null
-            ? `${langDict.detailsPredictionLabel} não aplicável, uma vez que não foi necessário ajuste temporal.`
-            : `${langDict.detailsPredictionLabel} ${formatNumberPt(lower, 2)} ${currentLang.code === 'pt' ? 'a' : 'to'} ${formatNumberPt(upper, 2)}`;
+            ? 'não aplicável, uma vez que não foi necessário ajuste temporal.'
+            : `${formatNumberPt(lower, 2)} ${currentLang.code === 'pt' ? 'a' : 'to'} ${formatNumberPt(upper, 2)}`;
 
         currentWeeklyEstimate = {
             sds: estimateSds,
