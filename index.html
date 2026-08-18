@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de IGF-1 | Monitorização com Somapacitano</title>
-    <meta name="description" content="Calculadora de Score de Desvio Padrão (SDS) do IGF-1 com relatório PDF contendo parâmetros, resultados, gráfico com proporção corrigida, logótipo Novo Nordisk e aviso de confidencialidade/privacidade.">
+    <meta name="description" content="Calculadora de IGF-1 SDS para monitorização com somapacitano, com estimativa do IGF-1 médio semanal, enquadramento de titulação e relatório PDF gerado localmente.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Chart.js for Percentile Graph -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -3396,53 +3396,73 @@ document.addEventListener('DOMContentLoaded', () => {
         updateWeeklyVisual(estimate.sds);
     }
 
-    function updateTitrationCard(estimate) {
-        if (!titrationGuidanceCard) return;
-        const langDict = translations[currentLang.code];
-        const currentDose = parseNumericInputValue(currentDoseInput.value);
-        const answer = secondConsecutiveResultSelect.value;
+    function buildTitrationGuidanceForReport({ weeklySds, currentDose, isSecondConsecutiveAbove2, lang }) {
+        const langDict = translations[lang];
+        const dose = Number(currentDose);
+        const hasDose = Number.isFinite(dose) && dose > 0;
+        const doseText = hasDose ? `${formatNumberPt(dose, 2)} ${langDict.doseUnit}` : '—';
+        const maximumDose = 0.16;
+        const margin = hasDose ? Math.max(0, maximumDose - dose) : NaN;
+        const marginText = Number.isFinite(margin) ? `${formatNumberPt(margin, 2)} ${langDict.doseUnit}` : '—';
         const lines = [];
 
-        if (estimate.sds >= -2 && estimate.sds <= 2) {
-            lines.push(`<div class="guidance-heading">${langDict.guidanceWithinTitle}</div>`);
-            lines.push(`<p>${langDict.guidanceWithinText}</p>`);
-            lines.push(`<p>${langDict.guidanceWithinNote}</p>`);
-        } else if (estimate.sds > 2) {
-            if (answer === 'sim') {
-                lines.push(`<div class="guidance-heading">${langDict.guidanceConfirmedTitle}</div>`);
-                lines.push(`<p>${langDict.guidanceConfirmedIntro}</p>`);
-                lines.push(`<p><strong>${langDict.guidanceDoseLabel}:</strong> ${Number.isFinite(currentDose) ? formatNumberPt(currentDose, 3) : '—'} ${langDict.doseUnit}</p>`);
-                lines.push(`<p><strong>${langDict.guidanceAdjustmentLabel}:</strong> −0,04 ${langDict.doseUnit}</p>`);
-                if (Number.isFinite(currentDose) && currentDose > 0.04) {
-                    lines.push(`<p><strong>${langDict.guidanceResultDoseLabel}:</strong> ${formatNumberPt(currentDose - 0.04, 3)} ${langDict.doseUnit}</p>`);
-                } else if (Number.isFinite(currentDose) && currentDose <= 0.04) {
-                    lines.push(`<p>${langDict.guidanceInvalidDose}</p>`);
-                } else {
-                    lines.push(`<p>${langDict.guidanceEnterDose}</p>`);
-                }
-                lines.push(`<p>${langDict.guidanceMoreReduction}</p>`);
-            } else {
-                lines.push(`<div class="guidance-heading">${langDict.guidanceAboveTitle}</div>`);
-                lines.push(`<p>${langDict.guidanceAboveFollowup}</p>`);
-                lines.push(`<p>${langDict.guidanceAboveNoChange}</p>`);
-            }
-        } else {
-            lines.push(`<div class="guidance-heading">${langDict.guidanceBelowTitle}</div>`);
-            const maximumDose = 0.16;
-            const hasDose = Number.isFinite(currentDose) && currentDose > 0;
-            const remainingMargin = hasDose ? Math.max(0, maximumDose - currentDose) : NaN;
-            lines.push(`<p><strong>${langDict.guidanceBelowDose}:</strong> ${hasDose ? `${formatNumberPt(currentDose, 3)} ${langDict.doseUnit}` : '—'}</p>`);
-            lines.push(`<p><strong>${langDict.guidanceBelowMargin}:</strong> ${hasDose ? `${formatNumberPt(remainingMargin, 3)} ${langDict.doseUnit}` : '—'}</p>`);
-            if (hasDose && currentDose < maximumDose) {
-                lines.push(`<p>${langDict.guidanceBelowConsider} ${langDict.guidanceBelowMax}</p>`);
-            } else {
-                lines.push(`<p>${langDict.guidanceAtMax}</p>`);
-                lines.push(`<p>${langDict.guidanceReview}</p>`);
-            }
-            lines.push(`<p>${langDict.guidanceWithinNote}</p>`);
+        if (!Number.isFinite(Number(weeklySds))) {
+            return {
+                statusTitle: lang === 'pt' ? 'Enquadramento indisponível' : 'Titration context unavailable',
+                lines: [],
+                statusType: 'notAvailable',
+                currentDoseText: doseText,
+                marginText,
+                noAutomaticDoseChangeText: langDict.guidanceWithinNote
+            };
         }
 
-        titrationGuidanceCard.innerHTML = lines.join('');
+        if (weeklySds >= -2 && weeklySds <= 2) {
+            lines.push(langDict.guidanceWithinText, langDict.guidanceWithinNote);
+            return { statusTitle: langDict.guidanceWithinTitle, lines, statusType: 'within', currentDoseText: doseText, marginText, noAutomaticDoseChangeText: langDict.guidanceWithinNote };
+        }
+
+        if (weeklySds > 2) {
+            if (isSecondConsecutiveAbove2) {
+                const reducedDose = hasDose ? Math.max(0, dose - 0.04) : NaN;
+                lines.push(
+                    lang === 'pt' ? 'Resultado acima do intervalo recomendado confirmado após administração subsequente.' : 'Result above the recommended range confirmed after a subsequent administration.',
+                    `${langDict.guidanceDoseLabel}: ${doseText}`,
+                    lang === 'pt' ? `Redução prevista no RCM, se clinicamente aplicável: 0,04 ${langDict.doseUnit}.` : `SmPC dose reduction, if clinically applicable: 0.04 ${langDict.doseUnit}.`,
+                    lang === 'pt' ? `Dose após redução, se clinicamente aplicável: ${Number.isFinite(reducedDose) ? `${formatNumberPt(reducedDose, 2)} ${langDict.doseUnit}` : '—'}.` : `Dose after reduction, if clinically applicable: ${Number.isFinite(reducedDose) ? `${formatNumberPt(reducedDose, 2)} ${langDict.doseUnit}` : '—'}.`,
+                    langDict.guidanceAboveNoChange
+                );
+                return { statusTitle: langDict.guidanceConfirmedTitle, lines, statusType: 'aboveConfirmed', currentDoseText: doseText, marginText, noAutomaticDoseChangeText: langDict.guidanceAboveNoChange };
+            }
+            lines.push(
+                langDict.guidanceAboveFollowup,
+                `${langDict.guidanceDoseLabel}: ${doseText}`,
+                lang === 'pt' ? 'Se o valor se mantiver > +2, é recomendada uma redução da dose em 0,04 mg/kg/semana.' : 'If the value remains > +2, a dose reduction of 0.04 mg/kg/week is recommended.',
+                langDict.guidanceAboveNoChange
+            );
+            return { statusTitle: langDict.guidanceAboveTitle, lines, statusType: 'above', currentDoseText: doseText, marginText, noAutomaticDoseChangeText: langDict.guidanceAboveNoChange };
+        }
+
+        lines.push(
+            `${langDict.guidanceBelowDose}: ${doseText}`,
+            ...(hasDose ? [`${langDict.guidanceBelowMargin}: ${marginText}`] : []),
+            hasDose && dose < maximumDose ? `${langDict.guidanceBelowConsider} ${langDict.guidanceBelowMax}` : langDict.guidanceAtMax,
+            hasDose && dose >= maximumDose ? langDict.guidanceReview : '',
+            langDict.guidanceWithinNote
+        );
+        return { statusTitle: langDict.guidanceBelowTitle, lines: lines.filter(Boolean), statusType: 'below', currentDoseText: doseText, marginText, noAutomaticDoseChangeText: langDict.guidanceWithinNote };
+    }
+
+    function updateTitrationCard(estimate) {
+        if (!titrationGuidanceCard) return;
+        const guidance = buildTitrationGuidanceForReport({
+            weeklySds: estimate.sds,
+            currentDose: currentDoseInput.value,
+            isSecondConsecutiveAbove2: secondConsecutiveResultSelect.value === 'sim',
+            lang: currentLang.code
+        });
+        const langDict = translations[currentLang.code];
+        titrationGuidanceCard.innerHTML = `<div class="guidance-heading">${guidance.statusTitle}</div>${guidance.lines.map(line => `<p>${line}</p>`).join('')}`;
     }
 
     function updateWeeklyWorkflow() {
@@ -3991,6 +4011,13 @@ document.addEventListener('DOMContentLoaded', () => {
             predictionNotApplicable: 'não aplicável, uma vez que não foi necessário ajuste temporal.',
             targetTitle: 'Alvo IGF-1 SDS médio semanal',
             targetText: 'Alvo: -2 a +2 SDS, preferencialmente próximo de 0',
+            calculationApplied: 'Cálculo aplicado',
+            calcMeasuredSds: 'SDS medido',
+            calcTime: 'Tempo após administração',
+            calcInterval: 'Intervalo aplicado',
+            calcAdjustment: 'Ajuste temporal aplicado',
+            calcWeeklySds: 'SDS médio semanal estimado',
+            calcPrediction: 'Intervalo de previsão 90%',
             titrationContext: 'Enquadramento para titulação',
             titrationNormal: 'A dose de somapacitano pode ser individualizada com base na velocidade de crescimento, reações adversas, peso corporal e IGF-1. Objetivo: manter o IGF-1 médio semanal SDS entre -2 e +2, preferencialmente próximo de 0. Não é apresentada uma alteração automática da dose.',
             titrationHigh: 'A dose de somapacitano pode ser individualizada com base na velocidade de crescimento, reações adversas, peso corporal e IGF-1. Se o IGF-1 SDS se mantiver acima de +2 após uma administração subsequente, considerar a redução de 0,04 mg/kg/semana, de acordo com o RCM. Não é apresentada uma alteração automática da dose.',
@@ -4036,6 +4063,13 @@ document.addEventListener('DOMContentLoaded', () => {
             predictionNotApplicable: 'not applicable because no temporal adjustment was required.',
             targetTitle: 'Weekly average IGF-1 SDS target',
             targetText: 'Target: -2 to +2 SDS, preferably close to 0',
+            calculationApplied: 'Calculation applied',
+            calcMeasuredSds: 'Measured SDS',
+            calcTime: 'Time after administration',
+            calcInterval: 'Applied interval',
+            calcAdjustment: 'Applied temporal adjustment',
+            calcWeeklySds: 'Estimated weekly average SDS',
+            calcPrediction: '90% prediction interval',
             titrationContext: 'Titration context',
             titrationNormal: 'The somapacitan dose may be individualised based on growth velocity, adverse reactions, body weight and IGF-1. Aim: maintain weekly average IGF-1 SDS between -2 and +2, preferably close to 0. No automatic dose change is provided.',
             titrationHigh: 'The somapacitan dose may be individualised based on growth velocity, adverse reactions, body weight and IGF-1. If IGF-1 SDS remains above +2 after a subsequent administration, consider a dose reduction of 0.04 mg/kg/week according to the SmPC. No automatic dose change is provided.',
@@ -4051,11 +4085,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    function formatReportNumber(value, lang) {
+    function formatReportNumber(value, lang, decimals = 2) {
+        if (!Number.isFinite(Number(value))) return lang === 'pt' ? 'Não disponível' : 'Not available';
         return new Intl.NumberFormat(lang === 'pt' ? 'pt-PT' : 'en-GB', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
         }).format(Number(value));
+    }
+
+    function formatDose(value, lang) {
+        if (!Number.isFinite(Number(value))) return lang === 'pt' ? 'Não disponível' : 'Not available';
+        return `${formatReportNumber(value, lang, 2)} mg/kg/${lang === 'pt' ? 'semana' : 'week'}`;
     }
 
     function getReportData(sds, valueNgMl, stats, formattedSDS) {
@@ -4073,18 +4113,18 @@ document.addEventListener('DOMContentLoaded', () => {
             kitName: getSelectedOptionText('kit'),
             sexName: getSelectedOptionText('sex'),
             age: document.getElementById('age').value,
-            rawValue: Number.isFinite(rawValue) ? rawValue.toFixed(selectedUnit === 'ng/mL' ? 1 : 2) : '-',
+            rawValue: Number.isFinite(rawValue) ? formatReportNumber(rawValue, lang, selectedUnit === 'ng/mL' ? 1 : 2) : '-',
             selectedUnit,
-            convertedValue: valueNgMl.toFixed(1),
+            convertedValue: formatReportNumber(valueNgMl, lang, 1),
             measuredSds: sds,
             measuredSdsText: `${sds > 0 ? '+' : ''}${formatReportNumber(sds, lang)}`,
             sdsText: `${sds > 0 ? '+' : ''}${formatReportNumber(sds, lang)}`,
             interpretation: interpretationEl.textContent,
-            referenceRange: `${stats.lower.toFixed(1)} - ${stats.upper.toFixed(1)}`,
+            referenceRange: `${formatReportNumber(stats.lower, lang, 1)} - ${formatReportNumber(stats.upper, lang, 1)}`,
             referenceAgeBand: stats.population === "adult" ? stats.ageBand : "",
             population: stats.population || "pediatric",
-            mean: stats.mean.toFixed(1),
-            sd: stats.sd.toFixed(1),
+            mean: formatReportNumber(stats.mean, lang, 1),
+            sd: formatReportNumber(stats.sd, lang, 1),
             chartImage: getChartImageData(),
             statusColor: (sds < -2 || sds > 2) ? '#ef4444' : (sds <= -1 || sds >= 1) ? '#f59e0b' : '#642F6C',
             clinicalComment: getClinicalComment(sds, currentLang.code),
@@ -4092,6 +4132,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 title: reportTranslations[lang].somapacitanMonitoring,
                 estimateLabel: reportTranslations[lang].weeklyAverage,
                 sds: currentWeeklyEstimate.sds,
+                status: currentWeeklyEstimate.status,
                 estimate: formatReportNumber(currentWeeklyEstimate.sds, lang),
                 interpretation: currentWeeklyEstimate.sds < -2
                     ? reportLang.belowRecommended
@@ -4101,14 +4142,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 prediction: currentWeeklyEstimate.pi === null
                     ? `${reportTranslations[lang].prediction90}: ${reportTranslations[lang].predictionNotApplicable}`
                     : `${reportTranslations[lang].prediction90}: ${formatReportNumber(currentWeeklyEstimate.lower, lang)} ${lang === 'pt' ? 'a' : 'to'} ${formatReportNumber(currentWeeklyEstimate.upper, lang)}`,
+                predictionValue: currentWeeklyEstimate.pi === null
+                    ? reportTranslations[lang].predictionNotApplicable
+                    : `${formatReportNumber(currentWeeklyEstimate.lower, lang)} ${lang === 'pt' ? 'a' : 'to'} ${formatReportNumber(currentWeeklyEstimate.upper, lang)}`,
                 hours: currentWeeklyEstimate.hours,
+                rangeLabel: currentWeeklyEstimate.rangeLabel,
+                adjustmentLabel: currentWeeklyEstimate.adjustmentLabel,
                 pi: currentWeeklyEstimate.pi,
                 lower: currentWeeklyEstimate.lower,
                 upper: currentWeeklyEstimate.upper,
                 doseLabel: reportTranslations[lang].currentDose,
                 dose: currentDoseInput ? currentDoseInput.value.trim() : '',
                 guidanceLabel: reportTranslations[lang].titrationContext,
-                guidance: titrationGuidanceCard ? titrationGuidanceCard.innerText.trim() : ''
+                guidance: buildTitrationGuidanceForReport({
+                    weeklySds: currentWeeklyEstimate.sds,
+                    currentDose: currentDoseInput ? currentDoseInput.value : '',
+                    isSecondConsecutiveAbove2: secondConsecutiveResultSelect.value === 'sim',
+                    lang
+                })
             } : null
         };
     }
@@ -4165,7 +4216,8 @@ document.addEventListener('DOMContentLoaded', () => {
             pink: [211, 80, 122]
         };
         const t = reportTranslations[data.lang];
-        const reportFont = 'helvetica';
+        const registeredFonts = typeof pdf.getFontList === 'function' ? pdf.getFontList() : {};
+        const reportFont = registeredFonts['Apis for Office'] ? 'Apis for Office' : 'helvetica';
 
         pdf.setProperties({
             title: `${t.reportTitle} — ${t.reportSubtitle}`,
@@ -4234,7 +4286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         labelValue(t.sex, data.sexName, margin + col + 2, y + 6, col - 7);
         labelValue(t.assay, data.kitName, margin + col * 2 + 2, y + 6, col - 7);
         labelValue(t.measuredIgf1, `${data.convertedValue} ng/mL`, margin + 5, y + 17, col - 10);
-        labelValue(t.currentDose, data.weeklyReport?.dose ? `${data.weeklyReport.dose} mg/kg/${data.lang === 'pt' ? 'semana' : 'week'}` : '—', margin + col + 2, y + 17, col - 7);
+        labelValue(t.currentDose, data.weeklyReport?.dose ? formatDose(data.weeklyReport.dose, data.lang) : '—', margin + col + 2, y + 17, col - 7);
         labelValue(t.timeAfterDose, data.weeklyReport ? `${data.weeklyReport.hours} ${data.lang === 'pt' ? 'horas' : 'hours'}` : '—', margin + col * 2 + 2, y + 17, col - 7);
         y += 33;
 
@@ -4291,7 +4343,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.weeklyReport) {
             const clamped = Math.max(-3, Math.min(3, data.weeklyReport.sds));
             const markerX = barX + ((clamped + 3) / 6) * barWidth;
-            pdf.setFillColor(...colors.teal);
+            const markerColor = data.weeklyReport.status === 'withinRecommended' ? colors.teal : colors.pink;
+            pdf.setFillColor(...markerColor);
             pdf.circle(markerX, barY + barHeight / 2, 2.2, 'F');
             if (data.weeklyReport.pi !== null) {
                 const lowerX = barX + ((Math.max(-3, Math.min(3, data.weeklyReport.sds - data.weeklyReport.pi)) + 3) / 6) * barWidth;
@@ -4300,7 +4353,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pdf.setLineWidth(0.5);
                 pdf.line(lowerX, barY + barHeight / 2, upperX, barY + barHeight / 2);
             }
-            setText(colors.teal, 8, 'bold');
+            setText(markerColor, 8, 'bold');
             pdf.text(`${data.weeklyReport.estimate} SDS`, Math.min(markerX - 8, pageWidth - margin - 24), barY - 1);
         }
         setText(colors.grey, 6.8, 'normal');
@@ -4312,11 +4365,33 @@ document.addEventListener('DOMContentLoaded', () => {
         pdf.text(t.targetText, barX, barY + 15);
         y = barY + 21;
 
+        if (data.weeklyReport) {
+            setText(colors.purple, 8.5, 'bold');
+            pdf.text(t.calculationApplied, margin, y);
+            y += 3;
+            const calculationLines = [
+                `${t.calcMeasuredSds}: ${data.measuredSdsText}`,
+                `${t.calcTime}: ${data.weeklyReport.hours} ${data.lang === 'pt' ? 'horas' : 'hours'}`,
+                `${t.calcInterval}: ${data.weeklyReport.rangeLabel}`,
+                `${t.calcAdjustment}: ${data.weeklyReport.adjustmentLabel} ${data.lang === 'pt' ? 'SDS' : 'SDS'}`,
+                `${t.calcWeeklySds}: ${data.weeklyReport.estimate}`,
+                `${t.calcPrediction}: ${data.weeklyReport.predictionValue}`
+            ];
+            const calculationHeight = Math.max(15, calculationLines.length * 3.2 + 5);
+            card(margin, y, contentWidth, calculationHeight, [252, 251, 252], colors.mediumGrey);
+            setText(colors.grey, 6.6, 'normal');
+            pdf.text(calculationLines, margin + 4, y + 5);
+            y += calculationHeight + 4;
+        }
+
         setText(colors.purple, 9.5, 'bold');
         pdf.text(t.titrationContext, margin, y);
         y += 3;
         setText(colors.grey, 7.2, 'normal');
-        const titrationText = data.weeklyReport && data.weeklyReport.sds > 2 ? t.titrationHigh : t.titrationNormal;
+        const titrationGuidance = data.weeklyReport?.guidance;
+        const titrationText = titrationGuidance
+            ? [titrationGuidance.statusTitle, ...titrationGuidance.lines].join(' ')
+            : t.titrationNormal;
         const titrationLines = pdf.splitTextToSize(titrationText, contentWidth - 10);
         const titrationHeight = Math.max(18, titrationLines.length * 3.1 + 9);
         card(margin, y, contentWidth, titrationHeight, [250, 249, 250], colors.warmGrey);
@@ -4329,14 +4404,24 @@ document.addEventListener('DOMContentLoaded', () => {
         y = wrapped(`${t.methodologyNoteLabel}: ${t.methodologyNote}`, margin, y, contentWidth, 3.1);
 
         y = wrapped(`${t.privacyNoteLabel}: ${t.privacyNote}`, margin, y, contentWidth, 3.0);
-        const legal = `${t.legal} ${t.rcmText}`;
+        const legal = t.legal;
         setText(colors.grey, 6.1, 'normal');
         const legalLines = pdf.splitTextToSize(legal, contentWidth);
-        const legalY = pageHeight - 17;
+        const legalY = pageHeight - 20;
         pdf.text(legalLines, margin, legalY);
-        pdf.link(margin + (data.lang === 'pt' ? 57 : 77), legalY - 3, 10, 4, {
+        const rcmLabel = data.lang === 'pt' ? 'RCM: ' : 'SmPC: ';
+        const linkWord = data.lang === 'pt' ? 'aqui' : 'here';
+        const rcmY = legalY + legalLines.length * 3;
+        setText(colors.grey, 6.1, 'normal');
+        pdf.text(rcmLabel, margin, rcmY);
+        const linkX = margin + pdf.getTextWidth(rcmLabel);
+        setText(colors.purple, 6.1, 'normal');
+        pdf.text(linkWord, linkX, rcmY);
+        pdf.link(linkX, rcmY - 2.5, pdf.getTextWidth(linkWord), 3, {
             url: 'https://www.ema.europa.eu/pt/documents/product-information/sogroya-epar-product-information_pt.pdf'
         });
+        setText(colors.grey, 6.1, 'normal');
+        pdf.text(data.lang === 'pt' ? '. Para mais informações, contacte o representante local do titular da AIM.' : '. For further information, contact the local representative of the marketing authorisation holder.', linkX + pdf.getTextWidth(linkWord), rcmY);
         setText(colors.grey, 6.1, 'normal');
         pdf.text(t.copyright, pageWidth / 2, pageHeight - 7, { align: 'center' });
 
@@ -4661,6 +4746,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const t = reportTranslations[data.lang];
         const measuredStatus = data.measuredSds < -2 ? t.belowMeasured : data.measuredSds > 2 ? t.aboveMeasured : t.withinMeasured;
         const weeklyStatus = weekly ? weekly.interpretation : t.weeklyNotAvailable;
+        const guidanceText = weekly?.guidance
+            ? [weekly.guidance.statusTitle, ...weekly.guidance.lines].join(' ')
+            : t.titrationNormal;
         container.innerHTML = `
             <div style="height:64px;background:#642F6C;color:#fff;margin:-28px -28px 18px;padding:12px 28px;box-sizing:border-box;">
                 <h1 style="margin:0;font-size:21px;line-height:1.2;">${t.reportTitle}</h1>
@@ -4687,7 +4775,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="height:8px;background:#D7D2CB;border-radius:5px;position:relative;margin:13px 4px 4px;"><div style="position:absolute;left:16.67%;width:66.66%;height:8px;background:#BA9CC5;border-radius:5px;">${weekly ? `<span style="position:absolute;left:${Math.max(0,Math.min(100,((weekly.sds+3)/6)*100))}%;top:-4px;width:16px;height:16px;border-radius:50%;background:#007396;transform:translateX(-50%);"></span>` : ''}</div></div>
             <div style="display:flex;justify-content:space-between;font-size:9px;"><span>-3</span><span>-2</span><span>0</span><span>+2</span><span>+3</span></div><p style="margin:5px 0 13px;">${t.targetText}</p>
             <h2 style="color:#642F6C;font-size:14px;margin:0 0 5px;">${t.titrationContext}</h2>
-            <div style="border:1px solid #D7D2CB;background:#faf9fa;border-radius:7px;padding:8px;margin-bottom:8px;">${weekly && weekly.sds > 2 ? t.titrationHigh : t.titrationNormal}</div>
+            <div style="border:1px solid #D7D2CB;background:#faf9fa;border-radius:7px;padding:8px;margin-bottom:8px;">${guidanceText}</div>
             <p style="font-size:9px;margin:5px 0;">${t.clinicalNoteLabel}: ${t.clinicalNote}</p>
             <p style="font-size:9px;margin:5px 0;">${t.methodologyNoteLabel}: ${t.methodologyNote}</p>
             <p style="font-size:8px;margin:5px 0;">${t.privacyNoteLabel}: ${t.privacyNote}</p>
